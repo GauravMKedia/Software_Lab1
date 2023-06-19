@@ -1,0 +1,52 @@
+1(a)Write a Python NLTK program to split the text sentence/paragraph from genesis corpus and display it into a list of words. Remove the Punctuation and Stopwords from the given text and perform Stemming and POS tagging.
+
+import nltk
+from nltk.corpus import genesis
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
+from nltk import pos_tag
+import string
+
+# Download the Genesis corpus if not already downloaded
+nltk.download('genesis')
+# Download the stopwords and POS tagger if not already downloaded
+nltk.download('stopwords')
+nltk.download('averaged_perceptron_tagger')
+
+# Load the Genesis corpus
+genesis_corpus = genesis.raw()
+
+# Split the text into words
+words = word_tokenize(genesis_corpus)
+
+# Remove punctuation
+table = str.maketrans('', '', string.punctuation)
+words = [word.translate(table) for word in words if word.isalpha()]
+
+# Remove stopwords
+stop_words = set(stopwords.words('english'))
+words = [word for word in words if word.lower() not in stop_words]
+
+# Perform stemming
+stemmer = PorterStemmer()
+stemmed_words = [stemmer.stem(word) for word in words]
+
+# Perform POS tagging
+pos_tags = pos_tag(words)
+
+# Display the results
+print("Original text:")
+print(genesis_corpus)
+print()
+
+print("Words:")
+print(words)
+print()
+
+print("Stemmed words:")
+print(stemmed_words)
+print()
+
+print("POS tags:")
+print(pos_tags)

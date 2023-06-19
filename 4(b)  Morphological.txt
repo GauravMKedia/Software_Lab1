@@ -1,0 +1,19 @@
+4(b)  Write a program to perform Morphological generation on different surface forms of a word
+
+import nltk
+from nltk.translate import MorphologicalAnalyzer
+
+# Initialize the morphological analyzer
+morph_analyzer = MorphologicalAnalyzer()
+
+# Word for morphological generation
+word = "cats"
+
+# Generate morphological analyses
+analyses = morph_analyzer.morphological_analysis(word)
+
+# Print the surface forms of the generated analyses
+print("Morphological Generation for '{}':".format(word))
+for analysis in analyses:
+    surface_form = analysis[0]
+    print(surface_form)

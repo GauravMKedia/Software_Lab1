@@ -1,0 +1,74 @@
+WordNet to find the semantic similarity between words and sentences in the document.(word sense disambiguation)-
+From text corpus, find all the synsets of the words from sentences. (perform tokenization, stopword removal & POS tagging for preprocessing)
+Find the semantic similarity bewteen the words(first five) and the sentences(first five) in the document. Also find out most similar words in the sentence.
+
+
+import nltk
+from nltk.corpus import wordnet as wn
+from nltk.tokenize import word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+from nltk.wsd import lesk
+
+# Load stopwords
+nltk.download('stopwords')
+stop_words = set(stopwords.words('english'))
+
+# Load WordNet lemmatizer
+lemmatizer = WordNetLemmatizer()
+
+# Read the document
+with open('your_document.txt', 'r', encoding='utf-8') as file:
+    document = file.read()
+
+# Tokenize the document into sentences
+sentences = nltk.sent_tokenize(document)
+
+# Preprocess the sentences
+preprocessed_sentences = []
+for sentence in sentences[:5]:
+    # Tokenize the sentence
+    tokens = word_tokenize(sentence)
+    
+    # Remove stopwords and perform lemmatization
+    filtered_tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens if token.lower() not in stop_words]
+    
+    # Perform POS tagging
+    tagged_tokens = nltk.pos_tag(filtered_tokens)
+    
+    preprocessed_sentences.append(tagged_tokens)
+
+# Find synsets for words in the sentences
+all_synsets = []
+for tagged_tokens in preprocessed_sentences:
+    synsets = []
+    for token, pos in tagged_tokens:
+        synsets.extend(wn.synsets(token, pos=pos))
+    all_synsets.append(synsets)
+
+# Calculate semantic similarity between words and sentences
+similarities = []
+for synsets in all_synsets[:5]:
+    sentence_similarities = []
+    for i, synset1 in enumerate(synsets):
+        word_similarities = []
+        for j, synset2 in enumerate(wn.all_synsets()):
+            similarity = synset1.path_similarity(synset2)
+            if similarity is not None:
+                word_similarities.append((j, similarity))
+        word_similarities.sort(key=lambda x: x[1], reverse=True)
+        most_similar_word = wn.all_synsets()[word_similarities[0][0]].lemmas()[0].name()
+        sentence_similarities.append((i, word_similarities, most_similar_word))
+    similarities.append(sentence_similarities)
+
+# Print the semantic similarity and most similar words
+for i, sentence_similarities in enumerate(similarities):
+    print("Sentence:", sentences[i][:50])
+    print("Semantic Similarity:")
+    for j, word_similarities, most_similar_word in sentence_similarities:
+        print("\tWord:", preprocessed_sentences[i][j])
+        print("\tMost Similar Word:", most_similar_word)
+        print("\tSimilarities:")
+        for k, similarity in word_similarities[:5]:
+            print("\t\t", wn.all_synsets()[k].lemmas()[0].name(), ":", similarity)
+        print()

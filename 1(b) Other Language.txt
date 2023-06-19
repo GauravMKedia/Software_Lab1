@@ -1,0 +1,23 @@
+1(b)Write a Python program to tokenize sentences with nltk, spacy and gensim in  language other than English (german).
+
+import nltk
+import spacy
+from gensim.utils import tokenize
+
+# NLTK
+german_text = "Guten Morgen! Wie geht es Ihnen?"
+nltk_tokenized = nltk.sent_tokenize(german_text, language='german')
+print("NLTK Tokenization:")
+print(nltk_tokenized)
+
+# SpaCy
+nlp = spacy.load("de_core_news_sm")
+spacy_doc = nlp(german_text)
+spacy_tokenized = [sent.text for sent in spacy_doc.sents]
+print("\nSpaCy Tokenization:")
+print(spacy_tokenized)
+
+# Gensim
+gensim_tokenized = list(tokenize(german_text, lowercase=True))
+print("\nGensim Tokenization:")
+print(gensim_tokenized)

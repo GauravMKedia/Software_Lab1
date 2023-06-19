@@ -1,0 +1,52 @@
+Named Entity Recognition and Dependency Parsing for Information Extration using spacy.
+Consider any text file (research article technical blog , any unstructured corpus used before)
+Perform NER to extract entities from individual sentences using spacy.
+use Dependency parsing, POS tagging to extract relationships between the entities.
+Create a tuple for information extraction
+T1( Entity1, Entity2, Relation label)
+Display no of such tuples extracted from considered corpus as extracted information
+
+import spacy
+
+# Load the English model in Spacy
+nlp = spacy.load("en_core_web_sm")
+
+# Read the text file or corpus
+with open("your_file_path.txt", "r", encoding="utf-8") as file:
+    text = file.read()
+
+# Process the text with Spacy
+doc = nlp(text)
+
+# Initialize a list to store the extracted tuples
+tuples = []
+
+# Iterate over sentences in the document
+for sent in doc.sents:
+    entities = []
+    relations = []
+    
+    # Perform NER on the sentence
+    for ent in sent.ents:
+        entities.append(ent.text)
+    
+    # Perform dependency parsing and POS tagging on the sentence
+    for token in sent:
+        if token.dep_ == "ROOT":
+            relation = token.lemma_
+            relations.append(relation)
+    
+    # Create tuples for information extraction
+    for entity1 in entities:
+        for entity2 in entities:
+            if entity1 != entity2:
+                for relation in relations:
+                    tup = (entity1, entity2, relation)
+                    tuples.append(tup)
+
+# Print the extracted tuples
+for tup in tuples:
+    print(tup)
+
+# Print the total number of tuples extracted
+print("Total number of tuples extracted: ", len(tuples))
